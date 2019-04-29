@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         String emptyString = "";
 
         // Update YouTube data
-        callYouTubeAPI();
+        //callAPI.main();
 
         // Button clear text from box
         clearButton.setOnClickListener(v -> inputBox.setText(emptyString));
