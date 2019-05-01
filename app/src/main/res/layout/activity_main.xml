@@ -95,9 +95,32 @@
         <TextView
             android:id="@+id/scoreText"
             android:layout_width="match_parent"
-            android:layout_height="204dp"
+            android:layout_height="wrap_content"
             android:gravity="center|center_vertical"
             android:text="0.0%"
             android:textSize="100sp" />
+
+        <TextView
+            android:id="@+id/scoreTotalLength"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center|center_vertical"
+            android:text="Total Length Score: 0.0%"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/scoreText4"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:gravity="center|center_vertical"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/scoreWordLength"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:gravity="center|center_vertical"
+            android:text="Word Length Score: 0.0%"
+            android:textSize="20sp" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

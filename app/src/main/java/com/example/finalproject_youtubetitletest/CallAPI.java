@@ -1,10 +1,5 @@
 package com.example.finalproject_youtubetitletest;
 
-/**
- * Sample Java code for youtube.videos.list
- * See instructions for running these code samples locally:
- * https://developers.google.com/explorer-help/guides/code_samples#java
- */
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -20,6 +15,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.io.FileWriter;
 
+/**
+ * This is the code which calls the API which should be run before running the app if you want to
+ * most up to date data. The reason for not implementing this inside the app is the google API
+ * limits daily use and we no longer be able to call the API after repeated launches of the app.
+ * Some of this code in the class is sample code provided by google on how to impliment their API.
+ * This code was heavily modified the orginal sample code started with can be found here:
+ * https://developers.google.com/youtube/v3/docs/videos/list
+ */
 public class CallAPI {
     // You need to set this value for your code to compile.
     // For example: ... DEVELOPER_KEY = "YOUR ACTUAL KEY";
@@ -49,42 +52,46 @@ public class CallAPI {
      */
     public static void main(String[] args)
             throws GeneralSecurityException, IOException, GoogleJsonResponseException {
-        FileWriter fileWriter = new FileWriter("C:/Users/Will/Desktop/samplefile2.txt");
-        int[] validCatagorys = {0, 1, 2, 10, 15, 17, 20, 23, 24, 26, 28};
-        for (int j = 0; j < validCatagorys.length; j++) {
+
+        FileWriter fileWriter = new FileWriter("./app/src/main/assets/Data.txt");
+        int[] validCategorys = {0, 1, 2, 10, 15, 17, 20, 23, 24, 26, 28};
+
+        for (int j = 0; j < validCategorys.length; j++) {
             String nextPageToken = null;
             int totalResults = 200;
             fileWriter.write("feregeretesqws Category: ");
-            fileWriter.write(Integer.toString(validCatagorys[j]));
+            fileWriter.write(Integer.toString(validCategorys[j]));
             fileWriter.write("\n\n");
+
             for (int i = 0; i < pageCount; i++) {
                 YouTube youtubeService = getService();
                 // Define and execute the API request
                 YouTube.Videos.List request = youtubeService.videos()
                         .list("snippet,contentDetails,statistics");
                 String out = null;
-                if (nextPageToken == null) {
+
+                if (nextPageToken == null) { // first page
                     VideoListResponse response = request.setKey(DEVELOPER_KEY)
                             .setChart("mostPopular")
                             .setRegionCode("US")
                             .setMaxResults(new Long(50))
-                            .setVideoCategoryId(Integer.toString(validCatagorys[j]))
+                            .setVideoCategoryId(Integer.toString(validCategorys[j]))
                             .execute();
                     out = response.toString();
-                } else {
+                } else { // other pages
                     VideoListResponse response = request.setKey(DEVELOPER_KEY)
                             .setChart("mostPopular")
                             .setPageToken(nextPageToken)
                             .setRegionCode("US")
                             .setMaxResults(new Long(50))
-                            .setVideoCategoryId(Integer.toString(validCatagorys[j]))
+                            .setVideoCategoryId(Integer.toString(validCategorys[j]))
                             .execute();
                     out = response.toString();
                 }
-                System.out.println(out);
+
                 fileWriter.write(out);
                 fileWriter.write("\n");
-                if (i + 1 == pageCount) {
+                if (i + 1 == pageCount) { // if last pag
                     break;
                 }
                 String totalResultsString = out.split("totalResults")[1];
@@ -92,19 +99,20 @@ public class CallAPI {
                 totalResultsString = totalResultsString.split("},\"prevPageToken")[0];
                 totalResultsString = totalResultsString.split("\":")[1];
                 totalResultsString = totalResultsString.split("}}")[0];
-                System.out.println(totalResultsString);
+                //System.out.println(totalResultsString);
                 totalResults = Integer.parseInt(totalResultsString);
+                // get total results so you go over it by mistake
                 if  ((i+1)*50 > totalResults) {
-                    System.out.println("hi 1");
+                    System.out.println("less than 200 results");
                     break;
                 }
-                try {
+                try { // try to get next page token will fail if no last page.
                     nextPageToken = out.split("nextPageToken")[1];
                     nextPageToken = nextPageToken.split(":\"")[1];
                     nextPageToken = nextPageToken.split("\",")[0];
                     System.out.println(nextPageToken);
                 } catch (Exception e) {
-                    System.out.println("hi");
+                    e.printStackTrace();
                     break;
                 }
             }
